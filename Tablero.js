@@ -26,6 +26,7 @@ class Tablero {
         for (let i = 1; i<=this.minas; i++) {
             let x
             let y
+            
             do {
                 x = Math.floor(Math.random()*(this.columnas))
                 y = Math.floor(Math.random()*(this.filas))

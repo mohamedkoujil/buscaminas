@@ -20,36 +20,17 @@ class Casilla {
     }
 
     calcularMinasVecinas(tablero) {
-        if (this.#mina == 1) return -1;
-    
-        let x = this.coordenadaX - 1;
-        let y = this.coordenadaY - 1;
-    
-        if (this.coordenadaX !== 0 && this.coordenadaX !== tablero.columnas && this.coordenadaY !== 0 && this.coordenadaY !== tablero.filas) {
-            for (let i = 0; i <= 2; i++) {
-                for (let j = 0; j <= 2; j++) {
-                    if (i !== 1 || j !== 1) {
-                        if (tablero.casillas[x + i][y + j].esMina()) {
-                            this.#minasAlrededor++;
-                        }
-                    }
-                }
-            }
-        } else {
-            for (let i = -1; i <= 1; i++) {
-                for (let j = -1; j <= 1; j++) {
-                    let nuevaX = x + i;
-                    let nuevaY = y + j;
-                    if (nuevaX >= 0 && nuevaX < tablero.columnas && nuevaY >= 0 && nuevaY < tablero.filas && (i !== 0 || j !== 0)) {
-                        if (tablero.casillas[nuevaX][nuevaY].esMina()) {
-                            this.#minasAlrededor++;
-                        }
-                    }
-                }
-            }
+        let x = this.coordenadaX -1
+        let y = this.coordenadaY -1
+
+        for (let i = 0; i<3; i++) {
+            if (x != 0 && x+2 != tablero.columnas && y) {}
         }
-    
-        return this.#minasAlrededor;
+        
+        return this.#minasAlrededor
     }
     
+    get minas() {
+        return this.#minasAlrededor
+    }
 }

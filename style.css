@@ -1,0 +1,28 @@
+#tablero {
+    display: flex;
+    flex-wrap: wrap;
+    width: 17em;
+}
+
+#tablero div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.3em;
+    padding: 0.1em;
+}
+
+
+div.false {
+    background-color: green;
+    width: 1em;
+    height: 1em;
+    margin: 0.2em;
+}
+
+div.true {
+    background-color: red;
+    width: 1em;
+    height: 1em;
+    margin: 0.2em;
+}
