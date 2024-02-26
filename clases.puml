@@ -9,27 +9,20 @@ class Tablero {
     + crearTablero()
 }
 
-abstract class Casilla {
-    # coordenadaY: int
-    # coordenadaX: int
-    # marcada: boolean
-    +{abstract} constructor(coordenadaY: int, coordenadaX: int)
+class Casilla {
+    + coordenadaY: int
+    + coordenadaX: int
+    + marcada: boolean
+    - mina: boolean
+
+    
+    + constructor(coordenadaY: int, coordenadaX: int)
     + marcar()
     + desmarcar()
 }
 
-class CasillaNormal {
-    - minasAlrededor: Int
-    + calcularMinasAlrededor(): Array[Casilla]
-}
-
-class CasillaMina {
-    + perder()
-}
 
 
 
 Tablero *-- Casilla
-Casilla <|-- CasillaMina
-Casilla <|-- CasillaNormal
 @enduml

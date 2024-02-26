@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="Tablero.js"></script>
+    <script src="Casilla.js"></script>
+    <title>DAWe1M06UF2 - Ex03</title>
+
+</head>
+
+<body onload="init()">
+    <script>
+        function init() {
+            let tablero = new Tablero(8,8,4)
+            console.log(tablero.casillas[5][5].calcularMinasVecinas(tablero))
+        }
+
+    </script>
+</body>
+
+
+
