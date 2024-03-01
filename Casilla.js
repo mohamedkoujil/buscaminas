@@ -14,6 +14,10 @@ class Casilla {
         this.#mina = 1
     }
 
+    mina() {
+        return this.#mina
+    }
+
     esMina() {
         if (this.#mina == 1) return true
         return false
@@ -24,7 +28,9 @@ class Casilla {
         let y = this.coordenadaY -1
 
         for (let i = 0; i<3; i++) {
-            if (x != 0 && x+2 != tablero.columnas && y) {}
+            for(let q = 0; q<3; q++) {
+                console.log(x+i, y+q)
+            }
         }
         
         return this.#minasAlrededor

@@ -1,7 +1,7 @@
 #tablero {
     display: flex;
     flex-wrap: wrap;
-    width: 17em;
+    width: 25em;
 }
 
 #tablero div {
@@ -9,7 +9,8 @@
     justify-content: center;
     align-items: center;
     font-size: 1.3em;
-    padding: 0.1em;
+    padding: 0.5em;
+    border-radius: 4px;
 }
 
 

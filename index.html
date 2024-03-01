@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="Tablero.js"></script>
     <script src="Casilla.js"></script>
+    <script src="script.js"></script>
     <link rel="stylesheet" type="text/css" href="style.css"/>
     <title>DAWe1M06UF2 - Ex03</title>
 
@@ -21,28 +22,7 @@
 
     <script>
 
-        function init() {
-            let tablero = new Tablero(8,8,4)
-            console.log(tablero.casillas)
-            console.log(tablero.casillas[5][5].calcularMinasVecinas(tablero))
-            dom(tablero)
-        }
-
-        function dom (tablero) {
-            let container = document.querySelector('#tablero')
-            let idCasilla = 1
-
-            for(let i in tablero.casillas[0]){
-                for(let q in tablero.casillas[i]) {
-                    let div = document.createElement('div')
-                    div.id = 'casilla'+idCasilla
-                    div.className = tablero.casillas[i][q].esMina()
-                    div.innerHTML = tablero.casillas[i][q].calcularMinasVecinas(tablero)
-                    container.appendChild(div)
-                    idCasilla++
-                }
-            }
-        }
+        
 
     </script>
 </body>
