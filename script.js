@@ -46,6 +46,7 @@ function clickCasilla(event) {
     event.target.innerHTML = casilla.minasAlrededor;
 
     let div = document.getElementById(event.target.id);
+    tablero.casillas[x][y].revelada = true;
     div.removeEventListener('click', clickCasilla);
 
 }
@@ -61,8 +62,9 @@ function clickDerechoCasilla(event) {
     let casilla = tablero.casillas[x][y];
 
     if (casilla.marcada) {
-        if(tablero.casillas[x][y].minasAlrededor == 0) event.target.innerHTML = '';
+        if(!tablero.casillas[x][y].revelada) event.target.innerHTML = '';
         else event.target.innerHTML = tablero.casillas[x][y].minasAlrededor;
+        
         casilla.desmarcar();
     } else {
         event.target.innerHTML = '🚩';
@@ -84,9 +86,11 @@ function revelarMinas() {
     for(let i in tablero.casillas[0]){
         for(let q in tablero.casillas[i]) {
             let div = document.getElementById('_' + q + '_' + i);
+
             if (tablero.casillas[q][i].esMina()) {
                 div.innerHTML = '💣';
             }
+
             div.removeEventListener('click', clickCasilla);
             div.removeEventListener('contextmenu', clickDerechoCasilla);
         }

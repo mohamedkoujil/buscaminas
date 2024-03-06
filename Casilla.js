@@ -4,6 +4,7 @@ class Casilla {
     marcada = false;
     #mina = 0;
     minasAlrededor = 0;
+    revelada = false;
 
     constructor(coordenadaX, coordenadaY){
         this.coordenadaX = coordenadaX
