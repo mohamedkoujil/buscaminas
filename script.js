@@ -15,8 +15,8 @@ function addDom () {
     for(let i in tablero.casillas[0]){
         for(let q in tablero.casillas[i]) {
             let div = document.createElement('div')
-            div.id = '_' + i + '_' + q
-            div.className = tablero.casillas[i][q].esMina()
+            div.id = '_' + q + '_' + i
+            div.className = tablero.casillas[q][i].esMina()
             div.addEventListener('click', clickCasilla)
             div.addEventListener('contextmenu', clickDerechoCasilla)
             container.appendChild(div)

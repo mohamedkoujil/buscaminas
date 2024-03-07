@@ -41,7 +41,7 @@ class Casilla {
                 if (x+i >= 0 && x+i < tablero.filas && y+q >= 0 && y+q < tablero.columnas) {
                     if (tablero.casillas[x+i][y+q].esMina()) {
                         this.minasAlrededor++
-                        console.log(tablero.casillas[x+q][y+i])
+                        
                     }
                 }
             }
