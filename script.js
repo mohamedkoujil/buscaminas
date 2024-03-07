@@ -97,3 +97,25 @@ function revelarMinas() {
     }
 }
 
+function ganar() {
+    alert('Has ganado');
+}
+
+
+function perder() {
+    revelarMinas();
+    setTimeout(() => {
+        alert('Has perdido');
+        pantallaContinuar();
+    }, 1000);
+    
+}
+
+function pantallaContinuar() {
+    let continuar = confirm('¿Quieres seguir jugando?');
+
+    if (continuar) {
+        location.reload();
+    }
+}
+
