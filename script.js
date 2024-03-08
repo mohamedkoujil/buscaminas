@@ -1,16 +1,14 @@
-const tablero = new Tablero(8,8,1)
+const tablero = new Tablero(8,8,63)
 
 function init() {
-    
     addDom(tablero)
-    console.log(tablero)
     tablero.casillas.forEach(fila => {fila.forEach(casilla => {if (casilla.esMina()) console.log(casilla)})})
     
 }
 
 function addDom () {
     let container = document.querySelector('#tablero')
-    let idCasilla = 1
+
 
     for(let i in tablero.casillas[0]){
         for(let q in tablero.casillas[i]) {
@@ -19,21 +17,20 @@ function addDom () {
             div.className = tablero.casillas[q][i].esMina()
             div.addEventListener('click', clickCasilla)
             div.addEventListener('contextmenu', clickDerechoCasilla)
-            container.appendChild(div)
-            idCasilla++
+            container.appendChild(div) 
         }
     }
 }
 
 function clickCasilla(event) {
 
-    
     let coordinates = event.target.id.split('_').slice(1, 3);
+    if (!tablero.minasPlantadas) {
+        tablero.plantarMinas(coordinates);
+    }
 
     let x = parseInt(coordinates[0]);
     let y = parseInt(coordinates[1]);
-
-    console.log(tablero.casillas[x][y]);
 
     if (tablero.casillas[x][y].esMina()) {
         perder();
@@ -43,7 +40,8 @@ function clickCasilla(event) {
     let casilla = tablero.casillas[x][y];
 
     casilla.calularMinasAlrededor(tablero);
-    event.target.innerHTML = casilla.minasAlrededor;
+    if (casilla.minasAlrededor != 0) event.target.innerHTML = casilla.minasAlrededor;
+    else event.target.innerHTML = "a";
 
     let div = document.getElementById(event.target.id);
     tablero.casillas[x][y].revelada = true;
@@ -116,6 +114,11 @@ function pantallaContinuar() {
 
     if (continuar) {
         location.reload();
-    }
+    } else window.close();
+
 }
+
+
+
+
 

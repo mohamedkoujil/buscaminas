@@ -47,4 +47,6 @@ class Casilla {
             }
         }
     }
+
+    
 }

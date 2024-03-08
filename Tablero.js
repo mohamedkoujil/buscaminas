@@ -3,14 +3,13 @@ class Tablero {
     columnas;
     minas;
     casillas = [];
+    minasPlantadas = false;
 
     constructor(filas, columnas, minas) {
         this.filas = filas;
         this.columnas = columnas;
         this.minas = minas;
         this.#generarTablero();
-        this.#plantarMinas();
-
     }
 
     #generarTablero() {
@@ -23,7 +22,9 @@ class Tablero {
         }
     }
 
-    #plantarMinas() {
+    plantarMinas(coordinates) {
+        this.minasPlantadas = true;
+
         if (this.minas > this.filas * this.columnas) {
             throw new Error("Number of mines exceeds the number of cells.");
         }
@@ -32,13 +33,16 @@ class Tablero {
             let x;
             let y;
             do {
+                console.log("coordinates", coordinates)
                 x = Math.floor(Math.random() * this.columnas);
                 y = Math.floor(Math.random() * this.filas);
-            } while (this.casillas[x][y].esMina());
+                console.log(x,y)
+            } while (this.casillas[x][y].esMina() || (x == coordinates[0] && y == coordinates[1]));
 
             this.casillas[x][y].minar();
-            console.log(x, y);
+
         }
     }
+
 
 }
