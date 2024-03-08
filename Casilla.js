@@ -5,6 +5,7 @@ class Casilla {
     #mina = 0;
     minasAlrededor = 0;
     revelada = false;
+    contada = false;
 
     constructor(coordenadaX, coordenadaY){
         this.coordenadaX = coordenadaX
@@ -40,13 +41,13 @@ class Casilla {
             for (let q = 0; q < 3; q++) {
                 if (x+i >= 0 && x+i < tablero.filas && y+q >= 0 && y+q < tablero.columnas) {
                     if (tablero.casillas[x+i][y+q].esMina()) {
-                        this.minasAlrededor++
-                        
+                        if(!this.contada) this.minasAlrededor++
                     }
                 }
             }
         }
+        this.contada = true
     }
 
-    
+
 }

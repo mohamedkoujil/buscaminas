@@ -1,6 +1,7 @@
 const tablero = new Tablero(8,8,10)
 
 function init() {
+    console.log(tablero)
     addDom(tablero)
     tablero.casillas.forEach(fila => {fila.forEach(casilla => {if (casilla.esMina()) console.log(casilla)})})
     
@@ -60,6 +61,7 @@ function clickDerechoCasilla(event) {
     let y = parseInt(coordinates[1]);
 
     console.log(x,y)
+
     let casilla = tablero.casillas[x][y];
 
     if (casilla.marcada) {
@@ -88,7 +90,11 @@ function revelarMinas() {
             let div = document.getElementById('_' + q + '_' + i);
 
             if (tablero.casillas[q][i].esMina()) {
-                div.innerHTML = '💣';
+                let img = document.createElement('img');
+                img.src = "images/bombrevealed.gif";
+                img.alt = "mina";
+                div.appendChild(img);
+
             }
 
             div.removeEventListener('click', clickCasilla);
@@ -120,42 +126,43 @@ function pantallaContinuar() {
 }
 
 function recursivaRevelarMinasHastaMina(x, y) {
-    // Check if the coordinates are out of bounds
+
     if (x < 0 || y < 0 || x >= tablero.filas || y >= tablero.columnas) {
         return;
     }
 
     let casilla = tablero.casillas[x][y];
 
-    // Check if the cell is a mine or has already been revealed
+
     if (casilla.esMina() || casilla.revelada) {
-        console.log('esmina', casilla.esMina(), 'revelada', casilla.revelada)
         return;
     }
 
-    // Remove click event listener for the current cell
+
     let div = document.getElementById('_' + x + '_' + y);
     div.removeEventListener('click', clickCasilla);
 
-    // Reveal the content of the current cell
+
     casilla.calularMinasAlrededor(tablero);
-    if (casilla.minasAlrededor !== 0) {
+
+    if (casilla.minasAlrededor !== 0 && !casilla.revelada) {
         div.innerHTML = casilla.minasAlrededor;
         return;
     } else {
-        div.innerHTML = 'a';
+        // Always reveal the cell, whether it's a number or empty
+        div.innerHTML = casilla.minasAlrededor !== 0 ? casilla.minasAlrededor : 'a';
     }
 
-    // Mark the current cell as revealed
+
     casilla.revelada = true;
 
-    // Recursively reveal neighboring cells
     for (let i = -1; i < 2; i++) {
         for (let q = -1; q < 2; q++) {
             recursivaRevelarMinasHastaMina(x + i, y + q);
         }
     }
 }
+
 
 
 
