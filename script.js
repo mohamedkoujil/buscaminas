@@ -1,10 +1,9 @@
-const tablero = new Tablero(8,8,10)
+var tablero = new Tablero(8,8,10)
+var tableroCreado = false
 
 function init() {
     console.log(tablero)
-    addDom(tablero)
-    tablero.casillas.forEach(fila => {fila.forEach(casilla => {if (casilla.esMina()) console.log(casilla)})})
-    
+    gestMenu()
 }
 
 function addDom () {
@@ -16,6 +15,14 @@ function addDom () {
             let div = document.createElement('div')
             div.id = '_' + q + '_' + i
             div.className = tablero.casillas[q][i].esMina()
+
+            let img = document.createElement('img')
+            img.src = "images/blank.gif"
+            img.alt = "blank"
+            img.className = "blank"
+            
+            div.appendChild(img)
+
             div.addEventListener('click', clickCasilla)
             div.addEventListener('contextmenu', clickDerechoCasilla)
             container.appendChild(div) 
@@ -24,8 +31,8 @@ function addDom () {
 }
 
 function clickCasilla(event) {
-
-    let coordinates = event.target.id.split('_').slice(1, 3);
+    console.log(event.currentTarget.id)
+    let coordinates = event.currentTarget.id.split('_').slice(1, 3);
     if (!tablero.minasPlantadas) {
         tablero.plantarMinas(coordinates);
     }
@@ -43,11 +50,21 @@ function clickCasilla(event) {
 
     let casilla = tablero.casillas[x][y];
 
-    casilla.calularMinasAlrededor(tablero);
-    if (casilla.minasAlrededor != 0) event.target.innerHTML = casilla.minasAlrededor;
-    else event.target.innerHTML = "a";
+    var img = document.createElement('img');
 
-    let div = document.getElementById(event.target.id);
+    casilla.calularMinasAlrededor(tablero);
+
+    if (casilla.minasAlrededor != 0){
+        img.src = "images/open" + casilla.minasAlrededor + ".gif";
+        event.currentTarget.innerHTML = '';
+        event.currentTarget.appendChild(img);
+    } else {
+        img.src = "images/open0.gif";
+        event.currentTarget.innerHTML = '';
+        event.currentTarget.appendChild(img);
+    }
+
+    let div = document.getElementById(event.currentTarget.id);
     tablero.casillas[x][y].revelada = true;
     div.removeEventListener('click', clickCasilla);
 
@@ -55,31 +72,37 @@ function clickCasilla(event) {
 
 function clickDerechoCasilla(event) {
     event.preventDefault();
-    let coordinates = event.target.id.split('_').slice(1, 3);
+    let coordinates = event.currentTarget.id.split('_').slice(1, 3);
 
     let x = parseInt(coordinates[0]);
     let y = parseInt(coordinates[1]);
 
-    console.log(x,y)
-
     let casilla = tablero.casillas[x][y];
 
+    let img = document.createElement('img');
+
     if (casilla.marcada) {
-        if(!tablero.casillas[x][y].revelada) event.target.innerHTML = '';
-        else event.target.innerHTML = tablero.casillas[x][y].minasAlrededor;
+        if(!tablero.casillas[x][y].revelada) {
+            img.src = "images/blank.gif";
+            event.currentTarget.innerHTML = '';
+            event.currentTarget.appendChild(img);
+        }
+        else {
+            img.src = "images/open"+ tablero.casillas[x][y].minasAlrededor +".gif";
+            event.currentTarget.innerHTML = '';
+            event.currentTarget.appendChild(img);
+        } 
         
         casilla.desmarcar();
+
     } else {
-        event.target.innerHTML = '🚩';
+        if(casilla.revelada) return;
+        img.src = "images/bombflagged.gif";
+        event.currentTarget.innerHTML = '';
+        event.currentTarget.appendChild(img);
         tablero.casillas[x][y].marcar();
     }
 
-}
-
-
-function perder() {
-    revelarMinas();
-    alert('Has perdido'); 
 }
 
 
@@ -90,11 +113,14 @@ function revelarMinas() {
             let div = document.getElementById('_' + q + '_' + i);
 
             if (tablero.casillas[q][i].esMina()) {
+                if (tablero.casillas[q][i].marcada) div.innerHTML = '';
+                
                 let img = document.createElement('img');
                 img.src = "images/bombrevealed.gif";
                 img.alt = "mina";
+                img.className = "mina";
+                div.innerHTML = '';
                 div.appendChild(img);
-
             }
 
             div.removeEventListener('click', clickCasilla);
@@ -133,26 +159,27 @@ function recursivaRevelarMinasHastaMina(x, y) {
 
     let casilla = tablero.casillas[x][y];
 
-
     if (casilla.esMina() || casilla.revelada) {
         return;
     }
 
-
     let div = document.getElementById('_' + x + '_' + y);
     div.removeEventListener('click', clickCasilla);
 
-
     casilla.calularMinasAlrededor(tablero);
 
+    let img = document.createElement('img');
+
     if (casilla.minasAlrededor !== 0 && !casilla.revelada) {
-        div.innerHTML = casilla.minasAlrededor;
+        img.src = "images/open" + casilla.minasAlrededor + ".gif";
+        div.innerHTML = '';
+        div.appendChild(img);
         return;
     } else {
-        // Always reveal the cell, whether it's a number or empty
-        div.innerHTML = casilla.minasAlrededor !== 0 ? casilla.minasAlrededor : 'a';
+        img.src = "images/open0.gif";
+        div.innerHTML = '';
+        div.appendChild(img);
     }
-
 
     casilla.revelada = true;
 
@@ -162,6 +189,27 @@ function recursivaRevelarMinasHastaMina(x, y) {
         }
     }
 }
+
+function gestMenu() {
+    document.getElementById('botonIniciar').addEventListener('click', iniciar);
+    document.getElementById('botonReiniciar').addEventListener('click', reiniciar);
+}
+
+function iniciar() {
+    if (!tableroCreado){
+        addDom();
+        tableroCreado = true;
+    }
+}
+
+function reiniciar() {
+    document.getElementById('tablero').innerHTML = '';
+    tablero = new Tablero(8,8,10);
+    console.clear();
+    tableroCreado = false;
+    iniciar()
+}
+
 
 
 
