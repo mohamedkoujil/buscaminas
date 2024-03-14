@@ -43,6 +43,7 @@ class Casilla {
             }
         }
         this.contada = true
+        return this.minasAlrededor
     }
 
 

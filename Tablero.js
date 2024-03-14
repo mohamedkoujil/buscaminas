@@ -43,23 +43,30 @@ class Tablero {
         }
     }
 
-    recursivaRevelarMinasHastaMina(x, y) {
-        if (x < 0 || y < 0 || x >= this.filas || y >= this.columnas) {
-            return;
-        }
+    destapar(x, y) {
+        let x = this.casillas[x];
+        let y = this.casillas[y];
 
-        let casilla = this.casillas[x][y];
-
-        if (casilla.esMina() || casilla.revelada || casilla.minasAlrededor > 0) {
-            return;
-        }
-
-        casilla.revelada = true;
-
-        for (let i = -1; i < 2; i++) {
-            for (let q = -1; q < 2; q++) {
-                this.recursivaRevelarMinasHastaMina(x + i, y + q);
+        for (let i = 0; i < x; i++) {
+            for (let q = 0; q < y; q++) {
+                this.revelar(x+i, y+q)
             }
         }
     }
+
+    revelar (x, y) {
+        if (x < 0 || x >= this.filas || y < 0 || y >= this.columnas) {
+            return
+        }
+
+        if (this.casillas[x][y].calcularMinasAlrededor > 0) {
+            return
+        }
+        this.casillas[x][y].revelada = true
+
+    }
+
+
+
+    
 }
