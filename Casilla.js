@@ -16,10 +16,6 @@ class Casilla {
         this.#mina = 1
     }
 
-    mina() {
-        return this.#mina
-    }
-
     esMina() {
         if (this.#mina == 1) return true
         return false

@@ -33,7 +33,6 @@ class Tablero {
             let x;
             let y;
             do {
-                console.log("coordinates", coordinates)
                 x = Math.floor(Math.random() * this.columnas);
                 y = Math.floor(Math.random() * this.filas);
                 console.log(x,y)
@@ -44,5 +43,23 @@ class Tablero {
         }
     }
 
+    recursivaRevelarMinasHastaMina(x, y) {
+        if (x < 0 || y < 0 || x >= this.filas || y >= this.columnas) {
+            return;
+        }
 
+        let casilla = this.casillas[x][y];
+
+        if (casilla.esMina() || casilla.revelada || casilla.minasAlrededor > 0) {
+            return;
+        }
+
+        casilla.revelada = true;
+
+        for (let i = -1; i < 2; i++) {
+            for (let q = -1; q < 2; q++) {
+                this.recursivaRevelarMinasHastaMina(x + i, y + q);
+            }
+        }
+    }
 }

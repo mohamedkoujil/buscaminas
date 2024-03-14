@@ -36,8 +36,19 @@ div img {
     border: black 1px solid;
 }
 
-#menu contenedorInfoPartida {
+#menu #contenedorInfoPartida {
+    display: flex;
+    justify-content: center;
     background-color: black;
-    color: white;
+    width: 8.25em;
+    height: 2em;
+    margin-left: 6em;
+    border: black 1px solid;
+}
+
+#menu #contenedorInfoPartida img {
+    width: 1.25em;
+    height: 100%;
+    margin: 0;
 }
 

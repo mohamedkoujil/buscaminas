@@ -1,17 +1,19 @@
-var tablero = new Tablero(8,8,10)
+var tablero = new Tablero(8, 8, 5)
 var tableroCreado = false
+var movimientos = 0
+
+
 
 function init() {
     console.log(tablero)
     gestMenu()
 }
 
-function addDom () {
+function addDom() {
     let container = document.querySelector('#tablero')
 
-
-    for(let i in tablero.casillas[0]){
-        for(let q in tablero.casillas[i]) {
+    for (let i in tablero.casillas[0]) {
+        for (let q in tablero.casillas[i]) {
             let div = document.createElement('div')
             div.id = '_' + q + '_' + i
             div.className = tablero.casillas[q][i].esMina()
@@ -20,54 +22,67 @@ function addDom () {
             img.src = "images/blank.gif"
             img.alt = "blank"
             img.className = "blank"
-            
+
             div.appendChild(img)
 
             div.addEventListener('click', clickCasilla)
             div.addEventListener('contextmenu', clickDerechoCasilla)
-            container.appendChild(div) 
+            container.appendChild(div)
         }
     }
 }
 
 function clickCasilla(event) {
-    console.log(event.currentTarget.id)
+    //console.log(event.currentTarget.id)
     let coordinates = event.currentTarget.id.split('_').slice(1, 3);
+
     if (!tablero.minasPlantadas) {
         tablero.plantarMinas(coordinates);
     }
-    
 
     let x = parseInt(coordinates[0]);
     let y = parseInt(coordinates[1]);
 
-    recursivaRevelarMinasHastaMina(x, y)
+    let casilla = tablero.casillas[x][y];
 
-    if (tablero.casillas[x][y].esMina()) {
+    if (casilla.esMina()) {
         perder();
         return;
     }
 
-    let casilla = tablero.casillas[x][y];
+    console.log(tablero)
+
+    destapar(x,y);
 
     var img = document.createElement('img');
 
     casilla.calularMinasAlrededor(tablero);
 
-    if (casilla.minasAlrededor != 0){
+    if (casilla.minasAlrededor != 0) {
         img.src = "images/open" + casilla.minasAlrededor + ".gif";
         event.currentTarget.innerHTML = '';
         event.currentTarget.appendChild(img);
+
     } else {
         img.src = "images/open0.gif";
         event.currentTarget.innerHTML = '';
         event.currentTarget.appendChild(img);
+
     }
 
     let div = document.getElementById(event.currentTarget.id);
     tablero.casillas[x][y].revelada = true;
     div.removeEventListener('click', clickCasilla);
 
+    movimientos++;
+
+    mostrarMovimientos();
+}
+
+function destapar(x, y) {
+
+        tablero.recursivaRevelarMinasHastaMina(x, y);
+    
 }
 
 function clickDerechoCasilla(event) {
@@ -82,21 +97,21 @@ function clickDerechoCasilla(event) {
     let img = document.createElement('img');
 
     if (casilla.marcada) {
-        if(!tablero.casillas[x][y].revelada) {
+        if (!tablero.casillas[x][y].revelada) {
             img.src = "images/blank.gif";
             event.currentTarget.innerHTML = '';
             event.currentTarget.appendChild(img);
         }
         else {
-            img.src = "images/open"+ tablero.casillas[x][y].minasAlrededor +".gif";
+            img.src = "images/open" + tablero.casillas[x][y].minasAlrededor + ".gif";
             event.currentTarget.innerHTML = '';
             event.currentTarget.appendChild(img);
-        } 
-        
+        }
+
         casilla.desmarcar();
 
     } else {
-        if(casilla.revelada) return;
+        if (casilla.revelada) return;
         img.src = "images/bombflagged.gif";
         event.currentTarget.innerHTML = '';
         event.currentTarget.appendChild(img);
@@ -107,14 +122,13 @@ function clickDerechoCasilla(event) {
 
 
 function revelarMinas() {
-
-    for(let i in tablero.casillas[0]){
-        for(let q in tablero.casillas[i]) {
+    for (let i in tablero.casillas[0]) {
+        for (let q in tablero.casillas[i]) {
             let div = document.getElementById('_' + q + '_' + i);
 
             if (tablero.casillas[q][i].esMina()) {
                 if (tablero.casillas[q][i].marcada) div.innerHTML = '';
-                
+
                 let img = document.createElement('img');
                 img.src = "images/bombrevealed.gif";
                 img.alt = "mina";
@@ -129,8 +143,12 @@ function revelarMinas() {
     }
 }
 
+
 function ganar() {
-    alert('Has ganado');
+    setTimeout(() => {
+        alert('Has ganado');
+        pantallaContinuar();
+    }, 1000);
 }
 
 
@@ -140,7 +158,7 @@ function perder() {
         alert('Has perdido');
         pantallaContinuar();
     }, 1000);
-    
+
 }
 
 function pantallaContinuar() {
@@ -151,44 +169,7 @@ function pantallaContinuar() {
     } else window.close();
 }
 
-function recursivaRevelarMinasHastaMina(x, y) {
 
-    if (x < 0 || y < 0 || x >= tablero.filas || y >= tablero.columnas) {
-        return;
-    }
-
-    let casilla = tablero.casillas[x][y];
-
-    if (casilla.esMina() || casilla.revelada) {
-        return;
-    }
-
-    let div = document.getElementById('_' + x + '_' + y);
-    div.removeEventListener('click', clickCasilla);
-
-    casilla.calularMinasAlrededor(tablero);
-
-    let img = document.createElement('img');
-
-    if (casilla.minasAlrededor !== 0 && !casilla.revelada) {
-        img.src = "images/open" + casilla.minasAlrededor + ".gif";
-        div.innerHTML = '';
-        div.appendChild(img);
-        return;
-    } else {
-        img.src = "images/open0.gif";
-        div.innerHTML = '';
-        div.appendChild(img);
-    }
-
-    casilla.revelada = true;
-
-    for (let i = -1; i < 2; i++) {
-        for (let q = -1; q < 2; q++) {
-            recursivaRevelarMinasHastaMina(x + i, y + q);
-        }
-    }
-}
 
 function gestMenu() {
     document.getElementById('botonIniciar').addEventListener('click', iniciar);
@@ -196,20 +177,37 @@ function gestMenu() {
 }
 
 function iniciar() {
-    if (!tableroCreado){
+    if (!tableroCreado) {
         addDom();
         tableroCreado = true;
+        mostrarMovimientos();
     }
 }
 
 function reiniciar() {
     document.getElementById('tablero').innerHTML = '';
-    tablero = new Tablero(8,8,10);
+    tablero = new Tablero(8, 8, 10);
     console.clear();
     tableroCreado = false;
+    movimientos = 0;
     iniciar()
 }
 
+function mostrarMovimientos() {
+    let img = document.createElement('img');
+    if(movimientos < 10) {
+        img.src = "images/moves" + movimientos + ".gif";
+    } else {
+        img.src = "images/moves" + movimientos[0] + ".gif";
+        let content = document.getElementById('imgMovimientos');
+        content.appendChild(img);
+
+    }
+    
+    let content = document.getElementById('imgMovimientos');
+    content.innerHTML = '';
+    content.appendChild(img);
+}
 
 
 
