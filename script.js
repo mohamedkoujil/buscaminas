@@ -1,11 +1,11 @@
-var tablero = new Tablero(8, 8, 5)
+var tablero = new Tablero(8, 8, 20)
 var tableroCreado = false
 var movimientos = 0
 
 
 
 function init() {
-    console.log(tablero)
+    //console.log(tablero)
     gestMenu()
 }
 
@@ -33,57 +33,51 @@ function addDom() {
 }
 
 function clickCasilla(event) {
-    //console.log(event.currentTarget.id)
-    let coordinates = event.currentTarget.id.split('_').slice(1, 3);
+    let coordinates = event.currentTarget.id.split('_').slice(1, 3)
+    let x = parseInt(coordinates[0])
+    let y = parseInt(coordinates[1])
 
     if (!tablero.minasPlantadas) {
-        tablero.plantarMinas(coordinates);
+        tablero.plantarMinas([x, y])
     }
 
-    let x = parseInt(coordinates[0]);
-    let y = parseInt(coordinates[1]);
-
-    let casilla = tablero.casillas[x][y];
-
-    if (casilla.esMina()) {
-        perder();
-        return;
+    if (tablero.casillas[x][y].esMina()) {
+        perder()
     }
+
+    tablero.casillas.forEach(fila => fila.forEach(casilla => {
+        casilla.calcularMinasAlrededor(tablero)
+    }))
+
+    //console.log(tablero.casillas[x][y].minasAlrededor)
+
+    tablero.destapar(x, y)
+
+    revelarMinasRec(x, y)
+
+    movimientos++
+    mostrarMovimientos()
+}
+
+function revelarMinasRec(x, y) {
+    tablero.casillas.forEach(fila => fila.forEach(casilla => {
+        if (casilla.revelada && !casilla.reveladaDom) {
+            imgFill(casilla.coordenadaX, casilla.coordenadaY)
+            casilla.reveladaDom = true
+        }
+    }))
+}
+
+function imgFill(x, y) {
+    let div = document.getElementById('_' + x + '_' + y)
+    let img = document.createElement('img')
 
     console.log(tablero)
-
-    destapar(x,y);
-
-    var img = document.createElement('img');
-
-    casilla.calularMinasAlrededor(tablero);
-
-    if (casilla.minasAlrededor != 0) {
-        img.src = "images/open" + casilla.minasAlrededor + ".gif";
-        event.currentTarget.innerHTML = '';
-        event.currentTarget.appendChild(img);
-
-    } else {
-        img.src = "images/open0.gif";
-        event.currentTarget.innerHTML = '';
-        event.currentTarget.appendChild(img);
-
-    }
-
-    let div = document.getElementById(event.currentTarget.id);
-    tablero.casillas[x][y].revelada = true;
-    div.removeEventListener('click', clickCasilla);
-
-    movimientos++;
-
-    mostrarMovimientos();
+    img.src = "images/open" + tablero.casillas[x][y].minasAlrededor + ".gif"
+    div.innerHTML = ''
+    div.appendChild(img)
 }
 
-function destapar(x, y) {
-
-        tablero.recursivaRevelarMinasHastaMina(x, y);
-    
-}
 
 function clickDerechoCasilla(event) {
     event.preventDefault();

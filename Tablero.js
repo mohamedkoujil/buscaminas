@@ -35,36 +35,65 @@ class Tablero {
             do {
                 x = Math.floor(Math.random() * this.columnas);
                 y = Math.floor(Math.random() * this.filas);
-                console.log(x,y)
             } while (this.casillas[x][y].esMina() || (x == coordinates[0] && y == coordinates[1]));
-
+            
             this.casillas[x][y].minar();
 
         }
     }
 
     destapar(x, y) {
-        let x = this.casillas[x];
-        let y = this.casillas[y];
+        if (this.casillas[x][y].esMina()) {
+            return
+        }
 
-        for (let i = 0; i < x; i++) {
-            for (let q = 0; q < y; q++) {
-                this.revelar(x+i, y+q)
+        if (this.casillas[x][y].revelada) {
+            return
+        }
+
+        if (tablero.casillas[x][y].minasAlerdedor > 0) {
+            tablero.casillas[x][y].revelada = true
+            return
+        } else {
+            //SI agua
+            tablero.casillas[x][y].revelada = true
+            let arrVecinos = this.obtenerVecinos(x, y);
+            console.log(arrVecinos)
+            for (let vecino of arrVecinos) {
+               // if (!vecino.revelada) {
+                    this.destapar(vecino.coordenadaX, vecino.coordenadaY);
+                //}
             }
         }
     }
 
-    revelar (x, y) {
-        if (x < 0 || x >= this.filas || y < 0 || y >= this.columnas) {
-            return
+    obtenerVecinos(x, y) {
+        let newX = x-1;
+        let newY = y-1;
+        let arrVecinos = [];
+    
+        for (let i = 0; i < 3; i++) {
+            for (let q = 0; q < 3; q++) {
+                if (newX >= 0 && newX < this.filas && newY >= 0 && newY < this.columnas) {
+                    //console.log("DestiaparVecinos"+newX, newY-"--");
+                    arrVecinos.push(this.casillas[newX][newY]);
+                }
+            }
         }
-
-        if (this.casillas[x][y].calcularMinasAlrededor > 0) {
-            return
-        }
-        this.casillas[x][y].revelada = true
-
+    
+        return arrVecinos;
     }
+    
+
+        //Soy bomba?? --> Salgo
+
+        //Recursividad empieza aqui
+        //Soy numero --> Me destapo y no hago nada mas
+        //Soy agua.
+            //me destapo
+            //FUNCION recuperar mis 8 vecinos en un array --> Comprobando que estan dentro de los limites.
+            //for de mis vecinos
+                //llamo a funcion recursiva.
 
 
 
