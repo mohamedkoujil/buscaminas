@@ -44,38 +44,43 @@ class Tablero {
 
     destapar(x, y) {
         if (this.casillas[x][y].esMina()) {
-            return
+            return;
         }
-
+    
         if (this.casillas[x][y].revelada) {
-            return
+            return;
         }
-
-        if (tablero.casillas[x][y].minasAlerdedor > 0) {
-            tablero.casillas[x][y].revelada = true
-            return
+    
+        this.casillas[x][y].revelada = true;
+    
+        if (this.casillas[x][y].minasAlrededor > 0) {
+            return; // Si hay minas alrededor, no revelar más casillas.
         } else {
-            //SI agua
-            tablero.casillas[x][y].revelada = true
             let arrVecinos = this.obtenerVecinos(x, y);
-            console.log(arrVecinos)
             for (let vecino of arrVecinos) {
-               // if (!vecino.revelada) {
+                if (!vecino.revelada) {
                     this.destapar(vecino.coordenadaX, vecino.coordenadaY);
-                //}
+                }
             }
         }
     }
+    
+    
 
     obtenerVecinos(x, y) {
-        let newX = x-1;
-        let newY = y-1;
         let arrVecinos = [];
     
-        for (let i = 0; i < 3; i++) {
-            for (let q = 0; q < 3; q++) {
-                if (newX >= 0 && newX < this.filas && newY >= 0 && newY < this.columnas) {
-                    //console.log("DestiaparVecinos"+newX, newY-"--");
+        // Iterar sobre un rango de -1 a 1 para generar vecinos
+        for (let i = -1; i <= 1; i++) {
+            for (let j = -1; j <= 1; j++) {
+                // Ignorar la casilla actual
+                if (i === 0 && j === 0) continue;
+    
+                let newX = x + i;
+                let newY = y + j;
+    
+                // Verificar si las coordenadas están dentro de los límites del tablero
+                if (this.esCasillaValida(newX, newY)) {
                     arrVecinos.push(this.casillas[newX][newY]);
                 }
             }
@@ -83,6 +88,12 @@ class Tablero {
     
         return arrVecinos;
     }
+    
+    esCasillaValida(x, y) {
+        return x >= 0 && x < this.filas && y >= 0 && y < this.columnas;
+    }
+    
+    
     
 
         //Soy bomba?? --> Salgo
