@@ -8,40 +8,58 @@ main {
 #tablero {
     display: flex;
     flex-wrap: wrap;
-    width: 25em;
+    justify-content: center;
+    background-color: rgb(194, 194, 194);
 }
 
 #tablero div {
     width: 2.7em;
-    height: 2.5em;
+
     cursor: pointer;
-    margin: 0.05em;
 }
 
 #tablero div:hover {
     filter: brightness(0.9);
 }
 
-div img {
+#tablero div img {
     width: 100%;
     height: 100%;
     margin: 0;
 }
 
-#menu {
+#tablero div img:active {
+    transform: scale(0.95);
+}
+
+
+
+#game {
     display: flex;
-    width: 25em;
+    flex-direction: column;
+    align-items: center;
+    width: 24em;
     margin-top: 1em;
     border: black 1px solid;
+}
+
+
+
+#menu {
+    display: flex;
+    background-color: rgb(0, 0, 0);
+    width: 20.5em;
+    margin-top: 1em;
+    padding: 0.5em;
 }
 
 #menu #contenedorInfoPartida {
     display: flex;
     justify-content: space-around;
-    background-color: black;
-    height: 2em;
-    border: black 1px solid;
+    width: 75%;
+    height: 3em;
 }
+
 
 #menu #contenedorInfoPartida img {
     width: 1.25em;
@@ -51,11 +69,36 @@ div img {
 
 #tiempoTranscurrido {
     display: flex;
-    justify-content: center;
-    width: 10em;
     color: white;
     font-size: 1.5em;
     margin: 0;
     padding: 0;
 }
+
+#menu #emoji img {
+    width: 3.25em;
+    transition: 0.1s;
+}
+
+#menu #emoji img:hover {
+    cursor: pointer;
+}
+
+#menu #emoji img:active {
+    transform: scale(0.95);
+}
+
+#menu #btnAjustes {
+    width: 3.25em;
+    transition: 0.1s;
+}
+
+#menu #btnAjustes:hover {
+    cursor: pointer;
+}
+
+#menu #btnAjustes:active {
+    transform: scale(0.95);
+}
+
 

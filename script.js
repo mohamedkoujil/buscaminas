@@ -143,7 +143,7 @@ function pantallaContinuar() {
 
 
 function gestMenu() {
-    document.getElementById('botonReiniciar').addEventListener('click', reiniciar);
+    document.getElementById('imgEmoji').addEventListener('click', reiniciar);
 }
 
 function iniciar() {
@@ -178,6 +178,7 @@ function mostrarMovimientos() {
 }
 
 function iniciarTemporizador() {
+    if (temporizador > 0) return
     let segundos = 0;
     temporizador = setInterval(() => {
         segundos++;
@@ -187,6 +188,7 @@ function iniciarTemporizador() {
 
 function detenerTemporizador() {
     clearInterval(temporizador);
+    temporizador = 0;
 }
 
 function mostrarTiempo(segundos) {
@@ -197,9 +199,9 @@ function mostrarTiempo(segundos) {
     } else if (segundos < 100) {
         let firstDigit = Math.floor(segundos / 10); // Obtiene el primer dígito
         let secondDigit = segundos % 10; // Obtiene el segundo dígito
-        changeSrcImg('imgTiempo1', "images/time" + firstDigit + ".gif");
-        changeSrcImg('imgTiempo2', "images/time" + secondDigit + ".gif");
-        changeSrcImg('imgTiempo3', "images/time0.gif");
+        changeSrcImg('imgTiempo1', "images/time0.gif");
+        changeSrcImg('imgTiempo2', "images/time" + firstDigit + ".gif");
+        changeSrcImg('imgTiempo3', "images/time" + secondDigit + ".gif");
     } else {
         let firstDigit = Math.floor(segundos / 100); // Obtiene el primer dígito
         let secondDigit = Math.floor((segundos % 100) / 10); // Obtiene el segundo dígito

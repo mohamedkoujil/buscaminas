@@ -1,0 +1,2 @@
+- musica de fondo 8bit que se pueda mutear desde los ajustes
+- sonidos victoria/derrota en 8bit
