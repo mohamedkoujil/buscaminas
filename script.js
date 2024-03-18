@@ -9,6 +9,7 @@ function init() {
     tableroCreado = true;
     mostrarMovimientos();
     gestMenu()
+    document.getElementById("audioID").autoplay = true;
 }
 
 function addDom() {
@@ -43,20 +44,22 @@ function clickCasilla(event) {
 
     if (!tablero.minasPlantadas) tablero.plantarMinas([x, y])
 
-    if (tablero.casillas[x][y].esMina()) perder()
+    if (tablero.casillas[x][y].revelada) return; // Salir de la función si la casilla ya está revelada
+
+    if (tablero.casillas[x][y].esMina()) perder(x, y)
 
     iniciarTemporizador(); // Llama a iniciarTemporizador() al hacer clic en una casilla.
     
     tablero.casillas.forEach(fila => fila.forEach(casilla => {
         casilla.calcularMinasAlrededor(tablero)
     }))
-    //console.log(tablero.casillas[x][y].minasAlrededor)
     tablero.destapar(x, y)
 
     revelarMinasRec(x, y)
 
     movimientos++
     mostrarMovimientos()
+    tablero.casillas[x][y].revelada = true
 }
 
 function revelarMinasRec(x, y) {
@@ -79,7 +82,6 @@ function clickDerechoCasilla(event) {
     let y = parseInt(coordinates[1]);
 
     let casilla = tablero.casillas[x][y];
-
     if (casilla.marcada) {
         if (!tablero.casillas[x][y].revelada) {
             addImg("images/blank.gif", event.currentTarget.id);
@@ -100,7 +102,7 @@ function clickDerechoCasilla(event) {
 }
 
 
-function revelarMinas() {
+function revelarMinas(x, y) {
     for (let i in tablero.casillas[0]) {
         for (let q in tablero.casillas[i]) {
             let div = document.getElementById('_' + q + '_' + i);
@@ -112,6 +114,7 @@ function revelarMinas() {
             div.removeEventListener('contextmenu', clickDerechoCasilla);
         }
     }
+    addImg("images/bombdeath.gif", "_" + x + "_" + y);
 }
 
 
@@ -123,8 +126,8 @@ function ganar() {
 }
 
 
-function perder() {
-    revelarMinas();
+function perder(x, y) {
+    revelarMinas(x, y);
     setTimeout(() => {
         alert('Has perdido');
         pantallaContinuar();
