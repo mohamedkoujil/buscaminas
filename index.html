@@ -15,8 +15,28 @@
     <main>
         <header>
             <h1>Buscaminas</h1>
-            <audio id="audioID" loop> <source src="music/SFX.mp3"  type="audio/mp3" loop></audio>
+            <audio id="audioID" loop> <source src="music/SFX.mp3"  type="audio/mp3"></audio>
+            <audio id="audioBomb"> <source src="music/explosion.mp3"  type="audio/mp3"></audio>
+            <audio id="audioWin"> <source src="music/victory.mp3"  type="audio/mp3"></audio>
         </header>
+        <section id="ajustes">
+            <form id="formAjustes">
+                <label for="nickJugador">Nick: </label>
+                <input type="text" id="nombreJugador" placeholder="ej.Noobmaster69">
+                <label for="email">Email: </label>
+                <input type="email" id="emailJugador" placeholder="ejemplo@ejemplo.ej">
+                <label for="dificultadSelector">Dificultad: </label>
+                <select id="dificultadSelector">
+                    <option value="facil">Fácil</option>
+                    <option value="medio">Medio</option>
+                    <option value="dificil">Difícil</option>
+                </select>
+            </form>
+            <div id="containerBtnSubmitAudio">
+                <button id="submit">Aceptar</button>
+                <img id="audioToggle" src="images/audioOff.png">
+            </div>
+        </section>
         
         <section id="game">
             <div id="menu">

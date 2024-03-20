@@ -9,12 +9,13 @@ function init() {
     tableroCreado = true;
     mostrarMovimientos();
     gestMenu()
-    document.getElementById("audioID").autoplay = true;
+    gestAjustes()
 }
 
 function addDom() {
     let container = document.querySelector('#tablero')
-
+    container.innerHTML = ''
+    console.log(tablero)
     for (let i in tablero.casillas[0]) {
         for (let q in tablero.casillas[i]) {
             let div = document.createElement('div')
@@ -119,6 +120,7 @@ function revelarMinas(x, y) {
 
 
 function ganar() {
+    document.querySelector('#audioWin').play();
     setTimeout(() => {
         alert('Has ganado');
         pantallaContinuar();
@@ -127,12 +129,12 @@ function ganar() {
 
 
 function perder(x, y) {
+    document.querySelector('#audioBomb').play();
     revelarMinas(x, y);
     setTimeout(() => {
         alert('Has perdido');
         pantallaContinuar();
     }, 1000);
-
 }
 
 function pantallaContinuar() {
@@ -165,6 +167,7 @@ function reiniciar() {
     movimientos = 0;
     reiniciarTemporizador(); // Llama a reiniciarTemporizador() al reiniciar el juego.
     iniciar();
+    ganar();
 }
 
 
@@ -224,6 +227,55 @@ function changeSrcImg(id, src) {
 function reiniciarTemporizador() {
     detenerTemporizador(); // Detener el temporizador antes de reiniciar.
     mostrarTiempo(0);
+}
+
+function gestAjustes() {
+    console.log('Gestión ajustes');
+    document.querySelector('#btnAjustes').addEventListener('click', mostrarAjustes);
+    document.querySelector('#submit').addEventListener('click', cambiarAjustes);
+    document.querySelector('#audioToggle').addEventListener('click', toggleMusic);
+}
+
+function mostrarAjustes() {
+    console.log('Mostrar ajustes');
+    document.querySelector('#ajustes').style.display = 'flex';
+    document.querySelector('#btnAjustes').removeEventListener('click', mostrarAjustes);
+    document.querySelector('#btnAjustes').addEventListener('click', ocultarAjustes);
+}
+
+function ocultarAjustes() {
+    console.log('Ocultar ajustes');
+    document.querySelector('#ajustes').style.display = 'none';
+    document.querySelector('#btnAjustes').removeEventListener('click', ocultarAjustes);
+    document.querySelector('#btnAjustes').addEventListener('click', mostrarAjustes);
+}
+
+function cambiarAjustes() {
+    reiniciar();
+    let dificultad = document.querySelector('#dificultadSelector').value;
+    console.log('Dificultad seleccionada: ' + dificultad);
+    switch (dificultad) {
+        case 'facil':
+            tablero = new Tablero(8, 8, 10);
+            break;
+        case 'medio':
+            tablero = new Tablero(12, 12, 30);
+            break;
+        case 'dificil':
+            tablero = new Tablero(16, 16, 99);
+            break;
+    }
+    addDom();
+}
+
+function toggleMusic() {
+    let audio = document.querySelector('#audioID');
+    if (audio.paused) {
+        audio.play();
+    } else {
+        audio.pause();
+    }
+    changeSrcImg('audioToggle', audio.paused ? "images/audioOff.png" : "images/audioOn.png");
 }
 
 
