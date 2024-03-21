@@ -7,11 +7,13 @@
     <script src="Tablero.js"></script>
     <script src="Casilla.js"></script>
     <script src="script.js"></script>
+    <script src="cookies.js"></script>
     <link rel="stylesheet" type="text/css" href="style.css"/>
     <title>DAWe1M06UF2 - Ex03</title>
 </head>
 
 <body onload="init()">
+    
     <main>
         <header>
             <h1>Buscaminas</h1>
@@ -19,10 +21,11 @@
             <audio id="audioBomb"> <source src="music/explosion.mp3"  type="audio/mp3"></audio>
             <audio id="audioWin"> <source src="music/victory3.mp3"  type="audio/mp3"></audio>
         </header>
+        
         <section id="ajustes">
             <form id="formAjustes">
                 <label for="nickJugador">Nick: </label>
-                <input type="text" id="nombreJugador" placeholder="ej.Noobmaster69">
+                <input type="text" id="nick" placeholder="ej.Noobmaster69">
                 <label for="email">Email: </label>
                 <input type="email" id="emailJugador" placeholder="ejemplo@ejemplo.ej">
                 <label for="dificultadSelector">Dificultad: </label>
@@ -37,8 +40,21 @@
                 <img id="audioToggle" src="images/audioOff.png">
             </div>
         </section>
-        
-        <section id="game">
+        <div id="containerGameRankng">
+            <aside id="ranking">
+                <h2>Ranking</h2>
+                <table id="tablaRanking">
+                    <tr>
+                        <th>Pos</th>
+                        <th>Nick</th>
+                        <th>Tiempo</th>
+                        <th>Moves</th>
+                        <th>Diff</th>
+                    </tr>
+                
+                </table>
+            </aside>
+            <section id="game">
             <div id="menu">
                 <div id="contenedorInfoPartida">
                     <div id="contMovimientos">
@@ -61,6 +77,8 @@
     
             </div>
         </section>
+        </div>
+        
         
     </main>
 </body>

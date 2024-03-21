@@ -1,5 +1,7 @@
 var tablero = new Tablero(8, 8, 25)
 var tableroCreado = false
+var dificultadTablero = 'facil'
+var tiempo = 0
 var movimientos = 0
 var temporizador;
 
@@ -10,6 +12,7 @@ function init() {
     mostrarMovimientos();
     gestMenu()
     gestAjustes()
+    mostrarAjustes()
 }
 
 function addDom() {
@@ -130,6 +133,7 @@ function ganar() {
 
 function perder(x, y) {
     document.querySelector('#audioBomb').play();
+    document.querySelector('#audioID').pause();
     revelarMinas(x, y);
     setTimeout(() => {
         alert('Has perdido');
@@ -141,7 +145,7 @@ function pantallaContinuar() {
     let continuar = confirm('¿Quieres seguir jugando?');
 
     if (continuar) {
-        location.reload();
+        reiniciar();
     } else window.close();
 }
 
@@ -160,12 +164,13 @@ function iniciar() {
 }
 
 function reiniciar() {
-    document.getElementById('tablero').innerHTML = '';
-    tablero = new Tablero(8, 8, 10);
-    console.clear();
-    tableroCreado = false;
+    detenerTemporizador(); // Detener el temporizador antes de reiniciar
     movimientos = 0;
-    reiniciarTemporizador(); // Llama a reiniciarTemporizador() al reiniciar el juego.
+    tiempo = 0;
+    reiniciarTemporizador(); // Reiniciar el temporizador
+    document.getElementById('tablero').innerHTML = '';
+    tablero = new Tablero(tablero.filas, tablero.columnas, tablero.minas);
+    tableroCreado = false;
     iniciar();
 }
 
@@ -187,6 +192,7 @@ function iniciarTemporizador() {
     let segundos = 0;
     temporizador = setInterval(() => {
         segundos++;
+        tiempo = segundos;
         mostrarTiempo(segundos);
     }, 1000);
 }
@@ -215,6 +221,7 @@ function mostrarTiempo(segundos) {
         changeSrcImg('imgTiempo2', "images/time" + secondDigit + ".gif");
         changeSrcImg('imgTiempo3', "images/time" + thirdDigit + ".gif");
     }
+
 }
 
 function changeSrcImg(id, src) {
@@ -233,26 +240,27 @@ function gestAjustes() {
     document.querySelector('#btnAjustes').addEventListener('click', mostrarAjustes);
     document.querySelector('#submit').addEventListener('click', cambiarAjustes);
     document.querySelector('#audioToggle').addEventListener('click', toggleMusic);
+    
 }
 
 function mostrarAjustes() {
     console.log('Mostrar ajustes');
     document.querySelector('#ajustes').style.display = 'flex';
-    document.querySelector('#btnAjustes').removeEventListener('click', mostrarAjustes);
-    document.querySelector('#btnAjustes').addEventListener('click', ocultarAjustes);
 }
 
 function ocultarAjustes() {
     console.log('Ocultar ajustes');
     document.querySelector('#ajustes').style.display = 'none';
-    document.querySelector('#btnAjustes').removeEventListener('click', ocultarAjustes);
-    document.querySelector('#btnAjustes').addEventListener('click', mostrarAjustes);
+
 }
 
 function cambiarAjustes() {
-    reiniciar();
+    setCookies(); //Por si se cambia solo el nick o el email
+    ocultarAjustes();
     let dificultad = document.querySelector('#dificultadSelector').value;
-    console.log('Dificultad seleccionada: ' + dificultad);
+    if (dificultadTablero == dificultad) return;
+    dificultadTablero = dificultad;
+    setCookies(); //Por si se cambia la dificultad
     switch (dificultad) {
         case 'facil':
             tablero = new Tablero(8, 8, 10);
@@ -264,10 +272,10 @@ function cambiarAjustes() {
             tablero = new Tablero(16, 16, 99);
             break;
     }
-    ocultarAjustes();
     editarTamanoTablero(dificultad);
-    addDom();
+    reiniciar(); // Reiniciar el juego después de cambiar la dificultad
 }
+
 
 function editarTamanoTablero(dificultad) {
     let tablero = document.querySelector('#tablero');
@@ -295,6 +303,15 @@ function toggleMusic() {
         audio.pause();
     }
     changeSrcImg('audioToggle', audio.paused ? "images/audioOff.png" : "images/audioOn.png");
+}
+
+function setCookies() {
+    console.log('Setting cookies');
+    let nick = document.querySelector('#nick').value;
+    let email = document.querySelector('#emailJugador').value;
+    if(movimientos == 0) crearCookie(nick, email, dificultadTablero, 0, 0);
+    else crearCookie(nick, email, dificultadTablero, movimientos, tiempo);
+    console.log(leerCookie());
 }
 
 
