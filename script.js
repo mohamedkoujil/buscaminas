@@ -167,7 +167,6 @@ function reiniciar() {
     movimientos = 0;
     reiniciarTemporizador(); // Llama a reiniciarTemporizador() al reiniciar el juego.
     iniciar();
-    ganar();
 }
 
 
@@ -265,7 +264,27 @@ function cambiarAjustes() {
             tablero = new Tablero(16, 16, 99);
             break;
     }
+    ocultarAjustes();
+    editarTamanoTablero(dificultad);
     addDom();
+}
+
+function editarTamanoTablero(dificultad) {
+    let tablero = document.querySelector('#tablero');
+    let width = 0;
+    switch(dificultad) {
+        case 'facil':
+            width = 32;
+            break;
+        case 'medio':
+            width = 48;
+            break;
+        case 'dificil':
+            width = 64;
+            break;
+    }
+    tablero.style.width = width + 'em';
+
 }
 
 function toggleMusic() {
