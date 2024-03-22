@@ -74,7 +74,7 @@ class Tablero {
         for (let i = -1; i <= 1; i++) {
             for (let j = -1; j <= 1; j++) {
                 // Ignorar la casilla actual
-                if (i === 0 && j === 0) continue;
+                if (i == 0 && j == 0) continue;
     
                 let newX = x + i;
                 let newY = y + j;

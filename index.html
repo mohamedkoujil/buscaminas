@@ -25,18 +25,20 @@
         <section id="ajustes">
             <form id="formAjustes">
                 <label for="nickJugador">Nick: </label>
-                <input type="text" id="nick" placeholder="ej.Noobmaster69">
+                <input type="text" id="nick" placeholder="ej.Noobmaster69" pattern="^[a-zA-Z0-9]{3,10}" required>
                 <label for="email">Email: </label>
-                <input type="email" id="emailJugador" placeholder="ejemplo@ejemplo.ej">
+                <input type="email" id="emailJugador" placeholder="ejemplo@ejemplo.ej" pattern="^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}">
                 <label for="dificultadSelector">Dificultad: </label>
                 <select id="dificultadSelector">
                     <option value="facil">Fácil</option>
                     <option value="medio">Medio</option>
                     <option value="dificil">Difícil</option>
                 </select>
+                <button id="submit" type="submit">Aceptar</button>
             </form>
-            <div id="containerBtnSubmitAudio">
-                <button id="submit">Aceptar</button>
+            <div id="containerInfoAndAudio">
+                <div id="datosUsr">
+                </div>
                 <img id="audioToggle" src="images/audioOff.png">
             </div>
         </section>

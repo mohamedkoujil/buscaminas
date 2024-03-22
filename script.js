@@ -7,29 +7,32 @@ var temporizador;
 
 
 function init() {
-    addDom();
-    tableroCreado = true;
-    mostrarMovimientos();
-    gestMenu()
-    gestAjustes()
-    mostrarAjustes()
+    if(leerCookie() == null || leerCookie().nick == '') {
+        addDom();
+        tableroCreado = true;
+        mostrarMovimientos();
+        gestMenu()
+        gestAjustes()
+        mostrarAjustes()
+    } else gestionarDatosCookie();
 }
 
 function addDom() {
     let container = document.querySelector('#tablero')
     container.innerHTML = ''
-    console.log(tablero)
     for (let i in tablero.casillas[0]) {
         for (let q in tablero.casillas[i]) {
             let div = document.createElement('div')
             div.id = '_' + q + '_' + i
-            div.className = tablero.casillas[q][i].esMina()
+            div.className = 'casilla'
             div.addEventListener('click', clickCasilla)
             div.addEventListener('contextmenu', clickDerechoCasilla)
             container.appendChild(div)
             addImg("images/blank.gif", div.id)
         }
     }
+    editarTamanoTableroDom(dificultadTablero)
+    editarTamanoCasillaDom(dificultadTablero)
 }
 
 function addImg(src, containerId) {
@@ -235,8 +238,7 @@ function reiniciarTemporizador() {
     mostrarTiempo(0);
 }
 
-function gestAjustes() {
-    console.log('Gestión ajustes');
+function gestAjustes() {;
     document.querySelector('#btnAjustes').addEventListener('click', mostrarAjustes);
     document.querySelector('#submit').addEventListener('click', cambiarAjustes);
     document.querySelector('#audioToggle').addEventListener('click', toggleMusic);
@@ -244,23 +246,28 @@ function gestAjustes() {
 }
 
 function mostrarAjustes() {
-    console.log('Mostrar ajustes');
     document.querySelector('#ajustes').style.display = 'flex';
 }
 
 function ocultarAjustes() {
-    console.log('Ocultar ajustes');
     document.querySelector('#ajustes').style.display = 'none';
 
 }
 
 function cambiarAjustes() {
     setCookies(); //Por si se cambia solo el nick o el email
-    ocultarAjustes();
+    if (verificacionDatos()) ocultarAjustes();
     let dificultad = document.querySelector('#dificultadSelector').value;
     if (dificultadTablero == dificultad) return;
     dificultadTablero = dificultad;
     setCookies(); //Por si se cambia la dificultad
+    cambiarTablero(dificultad);
+    editarTamanoCasillaDom(dificultad);
+    reiniciar(); // Reiniciar el juego después de cambiar la dificultad
+}
+
+function cambiarTablero(dificultad) {
+    console.log(dificultad);
     switch (dificultad) {
         case 'facil':
             tablero = new Tablero(8, 8, 10);
@@ -272,12 +279,11 @@ function cambiarAjustes() {
             tablero = new Tablero(16, 16, 99);
             break;
     }
-    editarTamanoTablero(dificultad);
-    reiniciar(); // Reiniciar el juego después de cambiar la dificultad
+    editarTamanoTableroDom(dificultad);
 }
 
 
-function editarTamanoTablero(dificultad) {
+function editarTamanoTableroDom(dificultad) {
     let tablero = document.querySelector('#tablero');
     let width = 0;
     switch(dificultad) {
@@ -285,14 +291,33 @@ function editarTamanoTablero(dificultad) {
             width = 32;
             break;
         case 'medio':
-            width = 48;
+            width = 36;
             break;
         case 'dificil':
-            width = 64;
+            width = 40;
             break;
     }
     tablero.style.width = width + 'em';
+}
 
+function editarTamanoCasillaDom(dificultad) {
+    let casillas = document.querySelectorAll('#tablero div');
+    let widthCasilla = 0;
+    switch(dificultad) {
+        case 'facil':
+            widthCasilla = 4;
+            break;
+        case 'medio':
+            widthCasilla = 3;
+            break;
+        case 'dificil':
+            widthCasilla = 2.5;
+            break;
+    }
+    casillas.forEach(casilla =>{
+        casilla.style.width = widthCasilla + 'em'
+        casilla.style.height = widthCasilla + 'em'
+    });
 }
 
 function toggleMusic() {
@@ -306,13 +331,59 @@ function toggleMusic() {
 }
 
 function setCookies() {
-    console.log('Setting cookies');
     let nick = document.querySelector('#nick').value;
     let email = document.querySelector('#emailJugador').value;
     if(movimientos == 0) crearCookie(nick, email, dificultadTablero, 0, 0);
     else crearCookie(nick, email, dificultadTablero, movimientos, tiempo);
     console.log(leerCookie());
 }
+
+function gestionarDatosCookie() {
+    let datos = leerCookie();
+    document.querySelector('#datosUsr').appendChild(crearDiv('nickDatos',"Nick: "+datos.nick));
+    document.querySelector('#datosUsr').appendChild(crearDiv('emailDatos',"Email: " + datos.email));
+    document.querySelector('#datosUsr').appendChild(crearDiv('dificultadDatos',"Diff: "+datos.dificultad));
+    dificultadTablero = datos.dificultad;
+    cambiarTablero(dificultadTablero);
+    addDom();
+    gestAjustes();
+    gestMenu();
+    mostrarMovimientos();
+}
+
+function crearDiv(id, data) {
+    let div = document.createElement('div');
+    div.id = id;
+    div.innerHTML = data;
+    return div;
+}
+
+
+function verificacionDatos() {
+    let form = document.querySelector('#formAjustes');
+}
+
+
+function verificarNick() {
+    let nick = document.querySelector('#nick');
+
+    if (!nick.checkValidity()) {
+        nick.classList.add('wrongInput');
+        nick.setCustomValidity('Nick no válido');
+        return false;
+    } else {
+        nick.classList.remove('wrongInput');
+        nick.setCustomValidity('');
+        return true;
+    }
+}
+
+function verificarEmail() {
+    let email = document.querySelector('#emailJugador');
+
+    
+}
+
 
 
 
