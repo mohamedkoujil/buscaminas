@@ -7,16 +7,22 @@ var temporizador;
 
 
 function init() {
-    if(leerCookie() == null || leerCookie().nick == '') {
+    // Mostrar ranking
+    mostrarRanking();
+    // Si no hay cookie, mostrar pantalla de configuracion
+    if(leerCookie() == null || leerCookie().nick == undefined) {
         addDom();
         tableroCreado = true;
         mostrarMovimientos();
-        gestMenu()
+        activarBtnReiniciar()
         gestAjustes()
         mostrarAjustes()
-    } else gestionarDatosCookie();
+    } else {
+        gestionarDatosCookie();
+    }
 }
 
+// // Agregar elementos de la interfaz de usuario
 function addDom() {
     let container = document.querySelector('#tablero')
     container.innerHTML = ''
@@ -31,10 +37,12 @@ function addDom() {
             addImg("images/blank.gif", div.id)
         }
     }
+    // Cambiar el tamaño del tablero y las casillas para que no hyan casillas sueltas
     editarTamanoTableroDom(dificultadTablero)
     editarTamanoCasillaDom(dificultadTablero)
 }
 
+// Agregar una imagen a un contenedor
 function addImg(src, containerId) {
     let container = document.getElementById(containerId);
     let img = document.createElement('img');
@@ -48,27 +56,53 @@ function clickCasilla(event) {
     let coordinates = event.currentTarget.id.split('_').slice(1, 3)
     let x = parseInt(coordinates[0])
     let y = parseInt(coordinates[1])
-
+    // Plantar minas si no se han plantado
     if (!tablero.minasPlantadas) tablero.plantarMinas([x, y])
-
-    if (tablero.casillas[x][y].revelada) return; // Salir de la función si la casilla ya está revelada
-
-    if (tablero.casillas[x][y].esMina()) perder(x, y)
-
-    iniciarTemporizador(); // Llama a iniciarTemporizador() al hacer clic en una casilla.
+    // Salir de la función si la casilla ya está revelada
+    if (tablero.casillas[x][y].revelada) return; 
+    // Perder si la casilla es una mina
+    if (tablero.casillas[x][y].esMina()) perder(x, y);
+    // Comprobar si el jugador ha ganado
+    comprobarVictoria();
+    // Llama a iniciarTemporizador() al hacer clic en una casilla.
+    iniciarTemporizador(); 
     
+    // Iterar sobre todas las casillas del tablero para calcular las minas alrededor
     tablero.casillas.forEach(fila => fila.forEach(casilla => {
         casilla.calcularMinasAlrededor(tablero)
     }))
+    // Destapar la casilla
     tablero.destapar(x, y)
-
+    // Revelar las minas
     revelarMinasRec(x, y)
-
+    // Incrementar el contador de movimientos
     movimientos++
+    // Actualizar el contador de movimientos en la interfaz de usuario
     mostrarMovimientos()
     tablero.casillas[x][y].revelada = true
 }
 
+function comprobarVictoria() {
+    // Contador para las casillas no reveladas
+    let casillasNoReveladas = 0;
+
+    // Iterar sobre todas las casillas del tablero
+    tablero.casillas.forEach(fila => {
+        fila.forEach(casilla => {
+            // Si la casilla no está revelada y no es una mina, incrementar el contador
+            if (!casilla.revelada && !casilla.esMina()) {
+                casillasNoReveladas++;
+            }
+        });
+    });
+
+    // Si todas las casillas no reveladas son minas, entonces el jugador ha ganado
+    if (casillasNoReveladas === tablero.minas) {
+        ganar();
+    }
+}
+
+// Actualizar la interfaz de usuario ver las minas reveladas
 function revelarMinasRec(x, y) {
     tablero.casillas.forEach(fila => fila.forEach(casilla => {
         if (casilla.revelada && !casilla.reveladaDom) {
@@ -99,6 +133,7 @@ function clickDerechoCasilla(event) {
         }
         casilla.desmarcar();
     } else {
+        // Si el número de casillas marcadas es igual al número de minas, no permitir marcar más casillas
         let marcadas = 0;
         tablero.casillas.forEach(fila => fila.forEach(casilla => {if (casilla.marcada) marcadas++}));
 
@@ -108,7 +143,7 @@ function clickDerechoCasilla(event) {
     }
 }
 
-
+// Revelar todas las minas en el tablero
 function revelarMinas(x, y) {
     for (let i in tablero.casillas[0]) {
         for (let q in tablero.casillas[i]) {
@@ -127,6 +162,7 @@ function revelarMinas(x, y) {
 
 function ganar() {
     document.querySelector('#audioWin').play();
+    guardarRanking(document.querySelector('#nick').value, movimientos, tiempo, dificultadTablero);
     setTimeout(() => {
         alert('Has ganado');
         pantallaContinuar();
@@ -152,12 +188,12 @@ function pantallaContinuar() {
     } else window.close();
 }
 
-
-
-function gestMenu() {
+// Función para activar el botón de reinicio.
+function activarBtnReiniciar() {
     document.getElementById('imgEmoji').addEventListener('click', reiniciar);
 }
 
+// Función para iniciar el jueg al reniciar.
 function iniciar() {
     if (!tableroCreado) {
         addDom();
@@ -166,6 +202,7 @@ function iniciar() {
     }
 }
 
+// Función para reiniciar el juego.
 function reiniciar() {
     detenerTemporizador(); // Detener el temporizador antes de reiniciar
     movimientos = 0;
@@ -177,12 +214,14 @@ function reiniciar() {
     iniciar();
 }
 
-
+// Función para mostrar los movimientos en la interfaz de usuario.
 function mostrarMovimientos() {
+    // Si el número de movimientos es menor que 10, actualizar un solo dígito.
     if (movimientos < 10) {
         changeSrcImg('imgMovimientos1', "images/moves0.gif");
         changeSrcImg('imgMovimientos2', "images/moves" + movimientos + ".gif");
     } else {
+        // Si el número de movimientos es mayor o igual a 10, actualizar dos dígitos.
         let firstDigit = Math.floor(movimientos / 10); // Obtiene el primer dígito
         let secondDigit = movimientos % 10; // Obtiene el segundo dígito
         changeSrcImg('imgMovimientos1', "images/moves" + firstDigit + ".gif");
@@ -191,6 +230,7 @@ function mostrarMovimientos() {
 }
 
 function iniciarTemporizador() {
+    // Si el temporizador ya está en marcha, no hacer nada.
     if (temporizador > 0) return
     let segundos = 0;
     temporizador = setInterval(() => {
@@ -206,17 +246,20 @@ function detenerTemporizador() {
 }
 
 function mostrarTiempo(segundos) {
+    // Si el número de segundos es menor que 10, actualizar un solo dígito.
     if (segundos < 10) {
         changeSrcImg('imgTiempo1', "images/time0.gif");
         changeSrcImg('imgTiempo2', "images/time0.gif");
         changeSrcImg('imgTiempo3', "images/time" + segundos + ".gif");
     } else if (segundos < 100) {
+        // Si el número de segundos es mayor o igual a 10 y menor que 100, actualizar dos dígitos.
         let firstDigit = Math.floor(segundos / 10); // Obtiene el primer dígito
         let secondDigit = segundos % 10; // Obtiene el segundo dígito
         changeSrcImg('imgTiempo1', "images/time0.gif");
         changeSrcImg('imgTiempo2', "images/time" + firstDigit + ".gif");
         changeSrcImg('imgTiempo3', "images/time" + secondDigit + ".gif");
     } else {
+        // Si el número de segundos es mayor o igual a 100, actualizar tres dígitos.
         let firstDigit = Math.floor(segundos / 100); // Obtiene el primer dígito
         let secondDigit = Math.floor((segundos % 100) / 10); // Obtiene el segundo dígito
         let thirdDigit = segundos % 10; // Obtiene el tercer dígito
@@ -227,6 +270,7 @@ function mostrarTiempo(segundos) {
 
 }
 
+// Cambiar la imagen de un elemento img.
 function changeSrcImg(id, src) {
     let img = document.getElementById(id);
     img.src = src;
@@ -238,6 +282,7 @@ function reiniciarTemporizador() {
     mostrarTiempo(0);
 }
 
+// Agregar eventos a los elementos de la interfaz de usuario.
 function gestAjustes() {;
     document.querySelector('#btnAjustes').addEventListener('click', mostrarAjustes);
     document.querySelector('#submit').addEventListener('click', cambiarAjustes);
@@ -245,16 +290,18 @@ function gestAjustes() {;
     
 }
 
+// Mostrar y ocultar la pantalla de ajustes.
 function mostrarAjustes() {
     document.querySelector('#ajustes').style.display = 'flex';
 }
-
 function ocultarAjustes() {
     document.querySelector('#ajustes').style.display = 'none';
 
 }
 
+// Cambiar la dificultad del tablero.
 function cambiarAjustes() {
+    console.log(document.querySelector('#dificultadSelector').value);
     setCookies(); //Por si se cambia solo el nick o el email
     if (verificacionDatos()) ocultarAjustes();
     let dificultad = document.querySelector('#dificultadSelector').value;
@@ -263,9 +310,10 @@ function cambiarAjustes() {
     setCookies(); //Por si se cambia la dificultad
     cambiarTablero(dificultad);
     editarTamanoCasillaDom(dificultad);
-    reiniciar(); // Reiniciar el juego después de cambiar la dificultad
+    reiniciar();
 }
 
+// Cambiar el tamaño del tablero según la dificultad.
 function cambiarTablero(dificultad) {
     console.log(dificultad);
     switch (dificultad) {
@@ -277,12 +325,13 @@ function cambiarTablero(dificultad) {
             break;
         case 'dificil':
             tablero = new Tablero(16, 16, 99);
+            console.log(tablero);
             break;
     }
     editarTamanoTableroDom(dificultad);
 }
 
-
+// Cambiar el tamaño del tablero en la interfaz de usuario
 function editarTamanoTableroDom(dificultad) {
     let tablero = document.querySelector('#tablero');
     let width = 0;
@@ -300,6 +349,7 @@ function editarTamanoTableroDom(dificultad) {
     tablero.style.width = width + 'em';
 }
 
+// Cambiar el tamaño de las casillas en la interfaz de usuario para mantener el tablero cuadrado
 function editarTamanoCasillaDom(dificultad) {
     let casillas = document.querySelectorAll('#tablero div');
     let widthCasilla = 0;
@@ -320,6 +370,7 @@ function editarTamanoCasillaDom(dificultad) {
     });
 }
 
+// Función para reproducir o pausar la música.
 function toggleMusic() {
     let audio = document.querySelector('#audioID');
     if (audio.paused) {
@@ -341,13 +392,15 @@ function setCookies() {
 function gestionarDatosCookie() {
     let datos = leerCookie();
     document.querySelector('#datosUsr').appendChild(crearDiv('nickDatos',"Nick: "+datos.nick));
-    document.querySelector('#datosUsr').appendChild(crearDiv('emailDatos',"Email: " + datos.email));
+    document.querySelector('#nick').value = datos.nick;
+    document.querySelector('#emailJugador').value = datos.email;
     document.querySelector('#datosUsr').appendChild(crearDiv('dificultadDatos',"Diff: "+datos.dificultad));
+    document.querySelector('#dificultadSelector').value = datos.dificultad;
     dificultadTablero = datos.dificultad;
     cambiarTablero(dificultadTablero);
     addDom();
     gestAjustes();
-    gestMenu();
+    activarBtnReiniciar();
     mostrarMovimientos();
 }
 
@@ -358,17 +411,20 @@ function crearDiv(id, data) {
     return div;
 }
 
-
+// Función para verificar los datos del usuario.
 function verificacionDatos() {
-    let form = document.querySelector('#formAjustes');
+    if(verificarNick() && verificarEmail()) return true;
+    return false;
 }
 
-
+// Función para verificar el nick del usuario.
 function verificarNick() {
     let nick = document.querySelector('#nick');
 
     if (!nick.checkValidity()) {
         nick.classList.add('wrongInput');
+        nick.value = '';
+        nick.placeholder = 'Nick no válido!';
         nick.setCustomValidity('Nick no válido');
         return false;
     } else {
@@ -377,12 +433,70 @@ function verificarNick() {
         return true;
     }
 }
-
+// Función para verificar el email del usuario.
 function verificarEmail() {
     let email = document.querySelector('#emailJugador');
-
-    
+    if (!email.checkValidity()) {
+        email.classList.add('wrongInput');
+        email.value = '';
+        email.placeholder = 'Email no válido!';
+        email.setCustomValidity('Email no válido');
+        return false;
+    } else {
+        email.classList.remove('wrongInput');
+        email.setCustomValidity('');
+        return true;
+    } 
 }
+
+// Crea un local storage con los datos del usuario
+function guardarRanking(nick, movimientos, tiempo, dificultad) {
+    let ranking = JSON.parse(localStorage.getItem('ranking')) || [];
+    ranking.push({ nick, movimientos, tiempo, dificultad });
+    localStorage.setItem('ranking', JSON.stringify(ranking));
+}
+
+// Obtener el ranking desde LocalStorage
+function obtenerRanking() {
+    return JSON.parse(localStorage.getItem('ranking')) || [];
+}
+
+// Ordenar el ranking por movimientos y tiempo
+function ordenarRanking() {
+    let ranking = obtenerRanking();
+    ranking.sort((a, b) => {
+        if (a.movimientos < b.movimientos) return -1;
+        if (a.movimientos > b.movimientos) return 1;
+        if (a.tiempo < b.tiempo) return -1;
+        if (a.tiempo > b.tiempo) return 1;
+        return 0;
+    });
+    return ranking;
+}
+
+// Mostrar el ranking en la interfaz de usuario
+function mostrarRanking() {
+    let ranking = ordenarRanking();
+    let table = document.querySelector('#tablaRanking');
+    table.innerHTML = '<tr><th>Pos</th><th>Nick</th><th>Tiempo</th><th>Moves</th><th>Diff</th></tr>';
+    ranking.forEach((jugador, index) => {
+        let tr = document.createElement('tr');
+        tr.appendChild(crearTd(index + 1));
+        tr.appendChild(crearTd(jugador.nick));
+        tr.appendChild(crearTd(jugador.tiempo));
+        tr.appendChild(crearTd(jugador.movimientos));
+        tr.appendChild(crearTd(jugador.dificultad));
+        table.appendChild(tr);
+    });
+    console.log(ranking);
+}
+
+function crearTd(innerInfo) {
+    let td = document.createElement('td');
+    td.innerHTML = innerInfo;
+    return td;
+}
+
 
 
 

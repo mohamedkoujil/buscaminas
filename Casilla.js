@@ -2,7 +2,7 @@ class Casilla {
     coordenadaX;
     coordenadaY;
     marcada = false;
-    #mina = 0;
+    mina = 0;
     minasAlrededor = 0;
     revelada = false;
     reveladaDom = false;
@@ -14,11 +14,11 @@ class Casilla {
     }
 
     minar() {
-        this.#mina = 1
+        this.mina = 1
     }
 
     esMina() {
-        if (this.#mina == 1) return true
+        if (this.mina == 1) return true
         return false
     }
 

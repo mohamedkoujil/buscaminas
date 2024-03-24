@@ -13,7 +13,6 @@
 </head>
 
 <body onload="init()">
-    
     <main>
         <header>
             <h1>Buscaminas</h1>
@@ -25,9 +24,9 @@
         <section id="ajustes">
             <form id="formAjustes">
                 <label for="nickJugador">Nick: </label>
-                <input type="text" id="nick" placeholder="ej.Noobmaster69" pattern="^[a-zA-Z0-9]{3,10}" required>
+                <input type="text" id="nick" placeholder="ej.Noobmaster69" pattern="^[a-zA-Z0-9]+$" required>
                 <label for="email">Email: </label>
-                <input type="email" id="emailJugador" placeholder="ejemplo@ejemplo.ej" pattern="^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}">
+                <input type="email" id="emailJugador" placeholder="ejemplo@ejemplo.ej">
                 <label for="dificultadSelector">Dificultad: </label>
                 <select id="dificultadSelector">
                     <option value="facil">Fácil</option>
@@ -46,13 +45,7 @@
             <aside id="ranking">
                 <h2>Ranking</h2>
                 <table id="tablaRanking">
-                    <tr>
-                        <th>Pos</th>
-                        <th>Nick</th>
-                        <th>Tiempo</th>
-                        <th>Moves</th>
-                        <th>Diff</th>
-                    </tr>
+                    
                 
                 </table>
             </aside>
